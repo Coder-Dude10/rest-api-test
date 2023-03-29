@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Server Test</title>
+  </head>
+  <body>
+    <input id="input">
+    <button onclick="uploadData();">Send</button>
+    <button onclick="getData();">Refresh</button>
+    <button onclick="start();">Start Conversation</button>
+    <div id="output"></div>
+    <script>
+      var currentData = 0;
+      var accessToken = atob("Z2hwX2FJRlBEdE9MU1pmNXYyZWFGRzlJZzgxSUlCdWZzZDFRQXF6aw==");
+
+      function start() {
+        currentData = -1;
+      }
+
+      async function uploadData() {
+        currentData += 2;
+        var data = btoa(document.getElementById("input").value);
+        const res = await fetch(
+          "https://api.github.com/repos/Coder-Dude10/multiplayer-server/contents/data" + currentData + ".txt",
+          {
+            method: "PUT",
+            headers: {
+              Accept: "application/vnd.github+json",
+              Authorization: "Bearer " + accessToken
+            },
+            body: JSON.stringify({
+              message: "upload files from api",
+              content: data
+            })
+          });
+          return await res.json();
+        }
+
+        function getData() {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("output").innerHTML = atob(JSON.parse(this.responseText).content);
+            }
+          };
+          xhttp.open("GET", "https://api.github.com/repos/Coder-Dude10/multiplayer-server/contents/data" + (currentData + 1) + ".txt", true);
+          xhttp.send();
+        }
+    </script>
+  </body>
+</html>
